@@ -1,22 +1,35 @@
+import React, {useState, useEffect} from 'react'
+import {uuid} from "uuidv4"
 import './App.css';
+import Header from "./Header"
+import AddContact from "./AddContact"
+import ContactList from "./ConstactList"
 
 function App() {
+  const LOCAL_STORAGE_KEY = "contacts"
+  const[contacts, setContacts] = useState([])
+
+  const addContactHandler = (contact) => {
+    setContacts([...contacts, {id: uuid, ...contact}]) 
+    console.log(contacts)
+  }
+
+  useEffect(()=>{
+    const retrievedContacts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+    if(retrievedContacts){
+      setContacts(retrievedContacts)
+    }
+  },[])
+
+  useEffect(()=>{
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts))
+  },[contacts])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src="" className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='ui container'>
+      <Header />
+      <AddContact addContactHandler={addContactHandler} />
+      <ContactList contacts={contacts} />
     </div>
   );
 }
